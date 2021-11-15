@@ -15,6 +15,7 @@ class Grid:
 		self.j = start[1]
 
 	# 각 상태의 보상과 선택 가능한 행동을 설정
+	# rewards 와 actions는 dictionary 형태로 주어진다. keys 는 좌표
 	def set(self, rewards, actions):
 		self.rewards = rewards
 		self.actions = actions
@@ -28,7 +29,7 @@ class Grid:
 
 	def is_terminal(self, s):
 		return s not in self.actions
-
+	
 	def move(self, action):
 		if action in self.actions[(self.i, self.j)]:
 			if action == 'U':
@@ -40,6 +41,7 @@ class Grid:
 			elif action == 'L':
 				self.j -= 1
 	    # 보상이 있을 경우 보상을 반환
+	    # 상태 전이 후 행위와 상태에 따른 reward를 지급한다. 만약 없으면 0
 		return self.rewards.get((self.i, self.j), 0)
 
 	# return all states (action choice or reward choice)
@@ -53,6 +55,7 @@ class Grid:
 def standard_grid():
 	grid = Grid(3, 4, (2, 0))
 	rewards = {(0, 3): 1, (1, 3): -1}
+	#각 노드별 취할 수 있는 actions를 저장한다
 	actions = {
 		(0, 0): ('D', 'R'),
 		(0, 1): ('L', 'R'),
@@ -96,7 +99,7 @@ def print_policy(P, grid):  #P is dictionary containing policy (action chice) fo
 	# 보상을 출력
 	print("\n보상: ")
 	print_values(grid.rewards, grid)
-
+	# agent가 취할 행동들을 무작위로 배분한다.
 	# 초기 정책은 각 상태에서 선택 가능한 행동을 무작위로 선택
 	policy = {}
 	for s in grid.actions.keys():
@@ -105,17 +108,17 @@ def print_policy(P, grid):  #P is dictionary containing policy (action chice) fo
 	# 정책 초기화
 	print("\n초기 정책:")
 	print_policy(policy, grid)
-
+	# V의 값을 agent가 임의로 배분한다.
 	# 가치 함수 V(s) 초기화
 	V = {}
 	states = grid.all_states()
 	for s in states:
 		# V[s] = 0
 		if s in grid.actions:
-			V[s] = np.random.random()
+			V[s] = 0
 		else:
 			# 종단 상태
-			V[s] = 0
+			V[s] = grid.rewards[s]
 
 	# 수렴할 때까지 반복
 	i = 0
