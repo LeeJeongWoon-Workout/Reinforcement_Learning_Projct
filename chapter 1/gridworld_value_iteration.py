@@ -100,15 +100,13 @@ if __name__ =='__main__':
     maxChange=0
     for s in V.keys():
       if s not in grid.rewards.keys():
-        new=float('-inf')
         oldValue=V[s]
         for a in ACTIONS:
           grid.set_state(s)
           r=grid.move(a)
           v=r+GAMMA*V[grid.current_state()]
-          if v>new:
-            new=v
-        V[s]=new
+          if v>oldValue:
+            V[s]=v
         maxChange=max(maxChange,np.abs(oldValue-V[s]))
     
     print('\n%i 번째 반복'%i,end="\n")
